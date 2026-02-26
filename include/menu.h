@@ -75,7 +75,7 @@ public:
    * 
    * inizializza il menu con il titolo e le opzioni date, non lo manda ancora a schermo.
    */
-  menu(std::vector<std::string> &title, std::vector<std::string> &options);
+  menu(std::vector<std::string> &title, std::vector<std::string> &options, std::string &filename);
 
   /**
    * @brief distruttore del menu

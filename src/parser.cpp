@@ -35,11 +35,14 @@ parser::parser(std::string &filename)
     std::string line;
     while (std::getline(file, line))
     {
+      if (line.empty())
+      {
+        aux = false;
+        continue;
+      }
+
       if (line[0] == '#') // ignora le linee con cancelletto
         continue;
-
-      if (line[0] == '\n') // quando incontra un invio a capo inizia ad aggiornare la mappa: strumento -> input channel
-        aux = false;
 
       auto [key, value] = this->parse(line);
 

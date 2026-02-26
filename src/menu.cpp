@@ -40,12 +40,17 @@ void menu::display()
   wrefresh(this->content_window);
 }
 
-menu::menu(std::vector<std::string> &title, std::vector<std::string> &options) : title(title), options(options)
+menu::menu(std::vector<std::string> &title, std::vector<std::string> &options, std::string &filename) : title(title), options(options)
 {
   int max_y = getmaxy(stdscr);
   int max_x = getmaxx(stdscr);
   this->running = true;
   this->current_option = 0;
+
+  // parsa il file di config passato da riga di comando e popola 'routing'
+  this->file_parser = new parser(filename);
+  this->routing.instr2bus = this->file_parser->get_instr2bus();
+  this->routing.instr2ch = this->file_parser->get_instr2ch();
 
   // crea la finestra del menu
   this->menu_window = newwin(max_y, max_x, 0, 0);
@@ -85,10 +90,18 @@ void menu::draw_content_window()
 
   //* Bus config
   case 1:
+    this->content.clear();
+    this->content.push_back("Strumento -> Bus");
+    for (const auto &pair : this->routing.instr2bus)
+      this->content.push_back(std::string(pair.first) + " -> " + std::to_string(pair.second));
     break;
 
   //* Channels config
   case 2:
+    this->content.clear();
+    this->content.push_back("Strumento -> Canale");
+    for (const auto &pair : this->routing.instr2ch)
+      this->content.push_back(std::string(pair.first) + " -> " + std::to_string(pair.second));
     break;
 
   //* Timer config
