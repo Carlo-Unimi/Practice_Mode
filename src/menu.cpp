@@ -91,17 +91,25 @@ void menu::draw_content_window()
   //* Bus config
   case 1:
     this->content.clear();
-    this->content.push_back("Strumento -> Bus");
+    this->content = {"[Strumento] -> [Bus]", ""};
     for (const auto &pair : this->routing.instr2bus)
-      this->content.push_back(std::string(pair.first) + " -> " + std::string(pair.second));
+    {
+      int len = 12 - pair.first.length();
+      this->content.push_back("  " + std::string(pair.first));
+      this->content.back() += std::string(len, ' ') + " ->  " + std::string(pair.second);
+    }
     break;
 
   //* Channels config
   case 2:
     this->content.clear();
-    this->content.push_back("Strumento -> Canale");
+    this->content = {"[Strumento] -> [Canale]", ""};
     for (const auto &pair : this->routing.instr2ch)
-      this->content.push_back(std::string(pair.first) + " -> " + std::string(pair.second));
+    {
+      int len = 12 - pair.first.length();
+      this->content.push_back("  " + std::string(pair.first));
+      this->content.back() += std::string(len, ' ') + " ->  " + std::string(pair.second);
+    }
     break;
 
   //* Timer config
