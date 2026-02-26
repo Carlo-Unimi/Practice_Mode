@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <vector>
+#include <iostream>
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -15,9 +16,32 @@
 
 #include "menu.h"
 
-//* PROGRAM HEAD
-int main(int argc, char **argv[])
+bool parse_arguments(int argc, char *argv[], std::string &filename)
 {
+  // se ci sono più di due argomenti OPPURE ce ne sono due e uno di questi è '--help' visualizza istruzioni
+  if ((argc == 2 && std::string(argv[1]) == "--help") || argc > 2)
+  {
+    std::cout << "Utilizzo: " << argv[0] << " [path_al_file]\n" << std::endl;
+    std::cout << "  --help     Mostra questo messaggio\n\n" << std::endl;
+    return true;
+  }
+
+  // se ci sono esattamente due argomenti, il secondo è il nome del file da parsare
+  if (argc == 2)
+    filename = std::string(argv[1]);
+  
+  return false;
+  
+}
+
+//* PROGRAM HEAD
+int main(int argc, char *argv[])
+{
+  std::string filename = "";
+
+  if (parse_arguments(argc, argv, filename))
+    return 0;
+
   initscr();
   noecho();
   cbreak();
