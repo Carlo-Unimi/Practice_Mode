@@ -3,7 +3,7 @@ TARGET = bin/practice_mode
 CXX = g++
 CXXFLAGS = -std=c++17 -Iinclude -I. -O2 -w
 # libraries
-# LDFLAGS = 
+LDFLAGS = -lncurses
 
 # directories
 SRC_DIR = src
