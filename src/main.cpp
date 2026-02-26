@@ -15,9 +15,6 @@
 
 #include "menu.h"
 
-#define XR18_IP "192.168.1.xxx"
-#define XR18_PORT 10024
-
 //* PROGRAM HEAD
 int main(int argc, char **argv[])
 {
@@ -28,12 +25,12 @@ int main(int argc, char **argv[])
   refresh();
 
   std::vector<std::string> title = {
-      "",
-      "",
-      "",
-      "",
-      ""};
-  std::vector<std::string> options = {};
+      " _____             _   _            _____       _     ",
+      "|  _  |___ ___ ___| |_|_|___ ___   |     |___ _| |___ ",
+      "|   __|  _| .'|  _|  _| |  _| -_|  | | | | . | . | -_|",
+      "|__|  |_| |__,|___|_| |_|___|___|  |_|_|_|___|___|___|",
+      "                                                      "};
+  std::vector<std::string> options = {"Mixer", "Bus", "Channels", "Timer", "START PRACTICE"};
 
   menu start_menu(title, options);
 
