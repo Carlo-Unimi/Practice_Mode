@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
       "                                                      "};
   std::vector<std::string> options = {"Mixer", "Bus", "Channels", "Timer", "Exit", "START PRACTICE"};
 
-  menu start_menu(title, options);
+  menu start_menu(title, options, filename);
 
   start_menu.run();
 
