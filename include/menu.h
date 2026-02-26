@@ -29,7 +29,23 @@ private:
   /**
    * @brief manda a schermo le modifiche apportate alla finestre.
    */
-  void menu::display();
+  void display();
+
+  /**
+   * @brief stampa il contenuto nella 'content_window'
+   */
+  void printContent();
+
+  /**
+   * @brief disegna la linea superiore delle opzioni
+   * @param h altezza a cui disegnare la linea
+   */
+  void draw_option_line(int h);
+
+  /**
+   * @brief stampa le opzioni del menu (quella corrente è evidenziata)
+   */
+  void draw_options();
 public:
   /**
    * @brief costruttore per la classe 'menu'
@@ -43,12 +59,12 @@ public:
   /**
    * @brief distruttore default del menu
    */
-  ~menu() = default;
+  ~menu();
 
   /**
    * @brief fa partire il programma e gestisce gli input dell'utente per la navigazione nel menu.
    */
-  void menu::run();
+  void run();
 };
 
 #endif
