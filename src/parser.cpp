@@ -3,15 +3,15 @@
 
 #include "../include/parser.h"
 
-parser::parser()
+void parser::no_args()
 {
   // inizializza la mappa: strumento -> sub
-  for (int i=0; i<4; i++)
-    this->instr2bus.insert(std::pair<std::string, int>("instr" + std::to_string(i+1), -1));
+  for (int i = 0; i < 4; i++)
+    this->instr2bus.insert(std::pair<std::string, int>("instr" + std::to_string(i + 1), -1));
 
   // inizializza la mappa: strumento -> channel
-  for (int i=0; i<4; i++)
-    this->instr2ch.insert(std::pair<std::string, int>("instr" + std::to_string(i+1), -1));
+  for (int i = 0; i < 4; i++)
+    this->instr2ch.insert(std::pair<std::string, int>("instr" + std::to_string(i + 1), -1));
 }
 
 std::pair<std::string, int> parser::parse(std::string &row)
@@ -40,7 +40,7 @@ parser::parser(std::string &filename)
 
       if (line[0] == '\n') // quando incontra un invio a capo inizia ad aggiornare la mappa: strumento -> input channel
         aux = false;
-      
+
       auto [key, value] = this->parse(line);
 
       if (aux)
@@ -49,9 +49,9 @@ parser::parser(std::string &filename)
         update_map(this->instr2ch, key, value);
     }
     file.close();
-  } 
+  }
   else
-    parser();
+    no_args();
 }
 
 std::map<std::string, int> parser::get_instr2bus()

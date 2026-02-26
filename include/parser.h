@@ -25,11 +25,6 @@ private:
 
 public:
   /**
-   * @brief costruttore di 'parser': inizializza un routing standard [instN, -1].
-   */
-  parser();
-
-  /**
    * @brief costruttore di 'parser': prende informazioni da un file di configurazione.
    */
   parser(std::string &filename);
@@ -38,6 +33,11 @@ public:
    * @brief distruttore del parser (default)
    */
   ~parser() = default;
+
+  /**
+   * @brief inizializza un routing standard [instN, -1].
+   */
+  void no_args();
 
   /**
    * @brief getter per il routing dei bus
