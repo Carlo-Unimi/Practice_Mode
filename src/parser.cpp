@@ -22,10 +22,16 @@ std::map<std::string, int> parser::get_instr2ch()
 
 void parser::update_map(std::map<std::string, int> &map, std::string &key, int &value)
 {
-
+  auto it = map.find(key);
+  if (it != map.end())
+    it->second = value;
+  else
+    map.insert(std::pair<std::string, int>(key, value));
 }
 
 void parser::delet_assoc(std::map<std::string, int> &map, std::string &key)
 {
-  
+  auto it = map.find(key);
+  if (it != map.end())
+    map.erase(it);
 }
