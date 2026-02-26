@@ -91,7 +91,7 @@ void menu::draw_content_window()
   //* Bus config
   case 1:
     this->content.clear();
-    this->content = {"[Strumento] -> [Bus]", ""};
+    this->content = {" [Strumento]   -> [Bus]", ""};
     for (const auto &pair : this->routing.instr2bus)
     {
       int len = 12 - pair.first.length();
@@ -103,7 +103,7 @@ void menu::draw_content_window()
   //* Channels config
   case 2:
     this->content.clear();
-    this->content = {"[Strumento] -> [Canale]", ""};
+    this->content = {" [Strumento]   -> [Canale]", ""};
     for (const auto &pair : this->routing.instr2ch)
     {
       int len = 12 - pair.first.length();
