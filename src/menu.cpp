@@ -93,7 +93,7 @@ void menu::draw_content_window()
     this->content.clear();
     this->content.push_back("Strumento -> Bus");
     for (const auto &pair : this->routing.instr2bus)
-      this->content.push_back(std::string(pair.first) + " -> " + std::to_string(pair.second));
+      this->content.push_back(std::string(pair.first) + " -> " + std::string(pair.second));
     break;
 
   //* Channels config
@@ -101,7 +101,7 @@ void menu::draw_content_window()
     this->content.clear();
     this->content.push_back("Strumento -> Canale");
     for (const auto &pair : this->routing.instr2ch)
-      this->content.push_back(std::string(pair.first) + " -> " + std::to_string(pair.second));
+      this->content.push_back(std::string(pair.first) + " -> " + std::string(pair.second));
     break;
 
   //* Timer config

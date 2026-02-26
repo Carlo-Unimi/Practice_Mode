@@ -13,15 +13,15 @@ class parser
 {
 private:
   std::string filename;                     // nome del file da cui caricare la configurazione del routing
-  std::map<std::string, int> instr2bus;     // mappa: instrument -> bus
-  std::map<std::string, int> instr2ch;      // mappa: instrument -> input channel
+  std::map<std::string, std::string> instr2bus;     // mappa: instrument -> bus
+  std::map<std::string, std::string> instr2ch;      // mappa: instrument -> input channel
 
   /**
    * @brief restituisce 'key' e 'value' da una riga del file di configurazione.
    * @param map mappa in cui inserire l'associazione
    * @param row riga del file di config
    */
-  std::pair<std::string, int> parse(std::string &row);
+  std::pair<std::string, std::string> parse(std::string &row);
 
 public:
   /**
@@ -43,28 +43,28 @@ public:
    * @brief getter per il routing dei bus
    * @return instr2bus
    */
-  std::map<std::string, int> get_instr2bus();
+  std::map<std::string, std::string> get_instr2bus();
 
   /**
    * @brief getter per il routing dei canali input
    * @return instr2ch
    */
-  std::map<std::string, int> get_instr2ch();
+  std::map<std::string, std::string> get_instr2ch();
 
   /**
-   * @brief inserisce in una mappa la coppia [string, int]; se la chiave 'string' è già presente, modifica il valore 'int' associato.
+   * @brief inserisce in una mappa la coppia [string, string]; se la chiave 'string' è già presente, modifica il valore 'string' associato.
    * @param map mappa su cui operare
    * @param key chiave da inserire / modificare
    * @param value valore da inserire / modificare
    */
-  void update_map(std::map<std::string, int> &map, std::string &key, int &value);
+  void update_map(std::map<std::string, std::string> &map, std::string &key, std::string &value);
 
   /**
    * @brief elimina in una mappa la coppia [key, value]; se la 'key' passata come parametro non è all'interno della mappa non restituisce errori.
    * @param map mappa su cui operare
    * @param key chiave da eliminare
    */
-  void delet_assoc(std::map<std::string, int> &map, std::string &key);
+  void delet_assoc(std::map<std::string, std::string> &map, std::string &key);
 };
 
 #endif

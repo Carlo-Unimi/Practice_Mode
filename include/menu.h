@@ -15,8 +15,8 @@
  */
 struct info
 {
-  std::map<std::string, int> instr2bus;   // indica per ogni 'strumento' presente, il 'bus' che utilizza per gli ascolti. 
-  std::map<std::string, int> instr2ch;    // indica per ogni 'strumento' presente, il 'canale' con cui entra nel mixer. 
+  std::map<std::string, std::string> instr2bus;   // indica per ogni 'strumento' presente, il 'bus' che utilizza per gli ascolti. 
+  std::map<std::string, std::string> instr2ch;    // indica per ogni 'strumento' presente, il 'canale' con cui entra nel mixer. 
 };
 
 /**
