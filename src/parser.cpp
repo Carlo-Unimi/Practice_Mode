@@ -1,4 +1,5 @@
 #include <sstream>
+#include <fstream>
 
 #include "../include/parser.h"
 
@@ -27,7 +28,30 @@ std::pair<std::string, int> parser::parse(std::string &row)
 
 parser::parser(std::string &filename)
 {
-  // inizializza le mappe come fa file passato. se non trova il file chiama il costruttore standard.
+  std::ifstream file(filename);
+  bool aux = true;
+  if (file.is_open())
+  {
+    std::string line;
+    while (std::getline(file, line))
+    {
+      if (line[0] == '#') // ignora le linee con cancelletto
+        continue;
+
+      if (line[0] == '\n') // quando incontra un invio a capo inizia ad aggiornare la mappa: strumento -> input channel
+        aux = false;
+      
+      auto [key, value] = this->parse(line);
+
+      if (aux)
+        update_map(this->instr2bus, key, value);
+      else
+        update_map(this->instr2ch, key, value);
+    }
+    file.close();
+  } 
+  else
+    parser();
 }
 
 std::map<std::string, int> parser::get_instr2bus()
