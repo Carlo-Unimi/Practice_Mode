@@ -1,8 +1,28 @@
+#include <sstream>
+
 #include "../include/parser.h"
 
 parser::parser()
 {
-  // inizializzo la mappa a 4 strumenti con numero di bus=-1 e nomi standard: [inst1, -1]
+  // inizializza la mappa: strumento -> sub
+  for (int i=0; i<4; i++)
+    this->instr2bus.insert(std::pair<std::string, int>("instr" + std::to_string(i+1), -1));
+
+  // inizializza la mappa: strumento -> channel
+  for (int i=0; i<4; i++)
+    this->instr2ch.insert(std::pair<std::string, int>("instr" + std::to_string(i+1), -1));
+}
+
+std::pair<std::string, int> parser::parse(std::string &row)
+{
+  std::string key, value_str;
+  int value;
+  std::istringstream iss(row);
+
+  iss >> key >> value_str;
+  value = std::stoi(value_str);
+
+  return std::pair<std::string, int>(key, value);
 }
 
 parser::parser(std::string &filename)

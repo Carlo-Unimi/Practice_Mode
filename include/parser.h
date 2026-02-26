@@ -17,13 +17,15 @@ private:
   std::map<std::string, int> instr2ch;      // mappa: instrument -> input channel
 
   /**
-   * @brief popola le mappe instr2bus e instr2ch.
+   * @brief restituisce 'key' e 'value' da una riga del file di configurazione.
+   * @param map mappa in cui inserire l'associazione
+   * @param row riga del file di config
    */
-  void parse();
+  std::pair<std::string, int> parse(std::string &row);
 
 public:
   /**
-   * @brief costruttore di 'parser': inizializza un routing standard.
+   * @brief costruttore di 'parser': inizializza un routing standard [instN, -1].
    */
   parser();
 
