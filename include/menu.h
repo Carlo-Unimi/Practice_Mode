@@ -3,8 +3,19 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include <ncurses.h>
+
+/**
+ * @struct info
+ * @brief contiene le informazioni riguardanti il canale di entrata e il bus di ogni membro della band. 
+ */
+struct info
+{
+  std::map<std::string, int> instr2bus;   // indica per ogni 'strumento' presente, il 'bus' che utilizza per gli ascolti. 
+  std::map<std::string, int> instr2ch;    // indica per ogni 'strumento' presente, il 'canale' con cui entra nel mixer. 
+};
 
 /**
  * @class menu
@@ -18,6 +29,8 @@ private:
   std::vector<std::string> options;       // titoli delle opzioni del menu
   std::vector<std::string> title;         // ASCII art 'Practice Mode'
   std::vector<std::string> content;       // informazioni da stampare nella finestra dei contenuti
+
+  info routing;
 
   std::string XR18_IP = "192.168.1.xxx";  // indirizzo IP del mixer
   int XR18_PORT = 10024;                  // numero di porta del mixer
