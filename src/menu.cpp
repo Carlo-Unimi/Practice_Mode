@@ -65,6 +65,9 @@ menu::menu(std::vector<std::string> &title, std::vector<std::string> &options) :
 
 menu::~menu()
 {
+  if (this->file_parser != nullptr)
+    delete this->file_parser;
+
   delwin(this->content_window);
   delwin(this->menu_window);
 }
