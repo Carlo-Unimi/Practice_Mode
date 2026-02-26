@@ -67,10 +67,6 @@ menu::~menu()
 {
   delwin(this->content_window);
   delwin(this->menu_window);
-
-  free(file_parser);
-  free(menu_window);
-  free(content_window);
 }
 
 void menu::draw_content_window()
@@ -148,6 +144,4 @@ void menu::run()
       break;
     }
   }
-
-  menu::~menu();
 }
