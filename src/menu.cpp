@@ -69,13 +69,75 @@ menu::~menu()
   delwin(this->menu_window);
 }
 
-void menu::run() {
-  // while(running)
+void menu::draw_content_window()
+{
+  wclear(this->content_window);
+  box(this->content_window, 0, 0);
+
+  switch (this->current_option)
+  {
+  //*
+  case 0:
+    break;
+
+  //*
+  case 1:
+    break;
+
+  //*
+  case 2:
+    break;
+
+  //*
+  case 3:
+    break;
+
+  //*
+  case 4:
+    break;
+
+  //*
+  case 5:
+    break;
+  }
+}
+
+void menu::run()
+{
+  while (running)
   {
     draw_options();
-    //draw_content_window();
+    draw_content_window();
     display();
 
     int ch = wgetch(this->menu_window);
+
+    switch (ch)
+    {
+    //* OPZIONE PRECEDENTE
+    case KEY_LEFT:
+    case 'a':
+      if (this->current_option > 0)
+				this->current_option--;
+			else
+				this->current_option = this->options.size() - 1;
+      break;
+
+    //* OPZIONE SUCCESSIVA
+    case KEY_RIGHT:
+    case 'd':
+      if (this->current_option < (int)this->options.size() - 1)
+				this->current_option++;
+			else
+				this->current_option = 0;
+      break;
+
+    //* ENTER
+    case 10:
+
+      if (current_option == 4)
+        running = false;
+      break;
+    }
   }
 }

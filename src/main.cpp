@@ -30,7 +30,7 @@ int main(int argc, char **argv[])
       "|   __|  _| .'|  _|  _| |  _| -_|  | | | | . | . | -_|",
       "|__|  |_| |__,|___|_| |_|___|___|  |_|_|_|___|___|___|",
       "                                                      "};
-  std::vector<std::string> options = {"Mixer", "Bus", "Channels", "Timer", "START PRACTICE"};
+  std::vector<std::string> options = {"Mixer", "Bus", "Channels", "Timer", "Exit", "START PRACTICE"};
 
   menu start_menu(title, options);
 

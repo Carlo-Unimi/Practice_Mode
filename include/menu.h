@@ -46,6 +46,11 @@ private:
    * @brief stampa le opzioni del menu (quella corrente è evidenziata)
    */
   void draw_options();
+
+  /**
+   * @brief stampa nella finestra dei contenuti la variabile 'content'
+   */
+  void draw_content_window();
 public:
   /**
    * @brief costruttore per la classe 'menu'
