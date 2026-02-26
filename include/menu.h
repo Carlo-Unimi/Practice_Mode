@@ -34,7 +34,7 @@ private:
   /**
    * @brief stampa il contenuto nella 'content_window'
    */
-  void printContent();
+  void print_content();
 
   /**
    * @brief disegna la linea superiore delle opzioni

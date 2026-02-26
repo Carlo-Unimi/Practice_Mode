@@ -1,9 +1,9 @@
 #include "../include/menu.h"
 
-void menu::printContent()
+void menu::print_content()
 {
-  for (size_t i = 0; i < this->content[this->current_option].size(); i++)
-    mvwprintw(this->content_window, 1 + i, 2, this->content[this->current_option].c_str());
+  for (size_t i = 0; i < this->content.size(); i++)
+    mvwprintw(this->content_window, 1 + i, 2, this->content[i].c_str());
 }
 
 void menu::draw_option_line(int h)
@@ -76,30 +76,34 @@ void menu::draw_content_window()
 
   switch (this->current_option)
   {
-  //*
+  //* Mixer config
   case 0:
     break;
 
-  //*
+  //* Bus config
   case 1:
     break;
 
-  //*
+  //* Channels config
   case 2:
     break;
 
-  //*
+  //* Timer config
   case 3:
     break;
 
-  //*
+  //* Exit
   case 4:
+    this->content = {"Premi INVIO per uscire dal programma."};
     break;
 
-  //*
+  //* START-STOP PRACTICE
   case 5:
+    this->content = {"Premi INVIO per iniziare la Practice Mode."};
     break;
   }
+
+  print_content();
 }
 
 void menu::run()
