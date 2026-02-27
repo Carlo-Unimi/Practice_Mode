@@ -34,7 +34,9 @@ private:
   std::vector<std::string> options; // titoli delle opzioni del menu
   std::vector<std::string> title;   // ASCII art 'Practice Mode'
   std::vector<std::string> content; // informazioni da stampare nella finestra dei contenuti
-  int practice_minutes = 15;        // durata della Practice Mode in minuti
+  int practice_minutes = 15;        // durata della Timer in minuti
+  int current_minutes = 0;          // minuti attuali del timer
+  bool practice_mode = false;       // 'true' se la Practice Mode è attiva, 'false' altrimenti
 
   info routing;                  // informazioni di routing della scena
   parser *file_parser = nullptr; // inizializza e modifica 'routing'
@@ -86,6 +88,11 @@ private:
    * @brief setta il timer della Practice Mode
    */
   void set_timer();
+
+  /**
+   * @brief resetta il timer della Practice Mode a 'practice_minutes' minuti.
+   */
+  void reset_timer();
 
 public:
   /**

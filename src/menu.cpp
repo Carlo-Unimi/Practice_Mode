@@ -38,9 +38,9 @@ void menu::set_timer()
 {
   echo();
   curs_set(1);
-  char buf[3];
+  char buf[10];
   mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Practice Mode (minuti): ");
-  wgetnstr(this->content_window, buf, 99);
+  wgetnstr(this->content_window, buf, 9);
   noecho();
   curs_set(0);
 
@@ -59,6 +59,11 @@ void menu::set_timer()
       wrefresh(this->content_window);
       napms(2000);
     }
+}
+
+void menu::reset_timer()
+{
+  this->current_minutes = 0;
 }
 
 void menu::print_content()
@@ -207,7 +212,14 @@ void menu::draw_content_window()
 
   //* START-STOP PRACTICE
   case 5:
-    this->content = {"Premi INVIO per iniziare la Practice Mode."};
+    if (this->practice_mode)
+    {
+      this->content = {"Practice Mode attiva. Premi INVIO per terminare."};
+    }
+    else
+    {
+      this->content = {"Premi INVIO per iniziare la Practice Mode."};
+    }
     break;
   }
 
@@ -294,12 +306,12 @@ void menu::run()
 
         echo();
         curs_set(1);
-        char buf[15];
+        char buf_instr[100];
         mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Nuovo nome: ");
-        wgetnstr(this->content_window, buf, 99);
+        wgetnstr(this->content_window, buf_instr, 49);
         noecho();
         curs_set(0);
-        std::string new_key = buf;
+        std::string new_key = buf_instr;
 
         if (!new_key.empty() && new_key != old_key)
         {
@@ -324,16 +336,16 @@ void menu::run()
 
         echo();
         curs_set(1);
-        char buf[5];
+        char buf_bus[20];
         mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Nuovo bus: ");
-        wgetnstr(this->content_window, buf, 99);
+        wgetnstr(this->content_window, buf_bus, 19);
         noecho();
         curs_set(0);
 
-        if (buf[0] != '\0')
+        if (buf_bus[0] != '\0')
         {
           std::string key = it->first;
-          std::string val = std::string(buf);
+          std::string val = std::string(buf_bus);
           this->file_parser->update_map(this->routing.instr2bus, key, val);
         }
       }
@@ -349,7 +361,7 @@ void menu::run()
 
         echo();
         curs_set(1);
-        char buf[5];
+        char buf[100];
         mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Nuovo canale: ");
         wgetnstr(this->content_window, buf, 99);
         noecho();
@@ -396,7 +408,17 @@ void menu::run()
         this->running = false;
         break;
       case 5: // avvia Practice Mode
-        this->content = {"Practice Mode iniziata! Premi INVIO per terminare."};
+        if (this->practice_mode)
+        {
+          this->options[5] = "START PRACTICE";
+          this->practice_mode = false;
+          this->reset_timer();
+        }
+        else
+        {
+          this->options[5] = "STOP  PRACTICE";
+          this->practice_mode = true;
+        }
         break;
       }
       break;
