@@ -47,7 +47,7 @@ bool mixer_controller::connect()
   }
 
   isConnected = true;
-  return true;
+  return isConnected;
 }
 
 void mixer_controller::disconnect()

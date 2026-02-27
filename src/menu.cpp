@@ -95,6 +95,7 @@ menu::menu(std::vector<std::string> &title, std::vector<std::string> &options, s
 
   // inizializza il mixer_controller con l'indirizzo IP e la porta del mixer
   this->mixer_ctrl = new mixer_controller(this->XR18_IP, this->XR18_PORT);
+  mixer_ctrl->connect();
 
   // crea la finestra del menu
   this->menu_window = newwin(max_y, max_x, 0, 0);
@@ -131,6 +132,10 @@ void menu::draw_content_window()
   case 0:
     this->content.clear();
     this->content.push_back("Mixer IP: " + this->XR18_IP);
+    if (this->mixer_ctrl->isConnected)
+      this->content.back() += "       [Stato: connesso]";
+    else
+      this->content.back() += "       [Stato: non connesso]";
     this->content.push_back("Mixer Port: " + std::to_string(this->XR18_PORT));
 
     this->content.push_back("");
@@ -261,7 +266,7 @@ void menu::run()
 
         echo();
         curs_set(1);
-        char buf[100];
+        char buf[15];
         mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Nuovo nome: ");
         wgetnstr(this->content_window, buf, 99);
         noecho();
@@ -291,7 +296,7 @@ void menu::run()
 
         echo();
         curs_set(1);
-        char buf[100];
+        char buf[5];
         mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Nuovo bus: ");
         wgetnstr(this->content_window, buf, 99);
         noecho();
@@ -316,7 +321,7 @@ void menu::run()
 
         echo();
         curs_set(1);
-        char buf[100];
+        char buf[5];
         mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Nuovo canale: ");
         wgetnstr(this->content_window, buf, 99);
         noecho();
@@ -334,7 +339,10 @@ void menu::run()
     //* RICONNETTI AL MIXER
     case 'r':
     case 'R':
-      
+      this->mixer_ctrl->connect();
+      mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Riconnessione al mixer in corso...");
+      wrefresh(this->content_window);
+      napms(2000);
       break;
     
     //* MODIFICA IP
@@ -351,7 +359,6 @@ void menu::run()
 
     //* ENTER
     case 10:
-
       if (current_option == 4)
         running = false;
       break;

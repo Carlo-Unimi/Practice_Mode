@@ -33,12 +33,14 @@ private:
 
   std::string mixer_ip;
   uint16_t mixer_port;
-  bool isConnected;
+  
   oscpkt::Message msg;
 
   bool send_udp_packet(const void* data, size_t size);
 
 public:
+  bool isConnected;
+  
   /**
    * @brief costruttore del mixer_controller.
    * @param ip l'indirizzo IP del mixer
