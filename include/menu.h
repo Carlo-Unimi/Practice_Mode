@@ -122,8 +122,9 @@ public:
 
   /**
    * @brief ferma la Practice Mode
+   * @param str stringa da stampare nella finestra dei contenuti al termine della Practice Mode
    */
-  void stop_practice_mode();
+  void stop_practice_mode(std::string str);
 };
 
 #endif

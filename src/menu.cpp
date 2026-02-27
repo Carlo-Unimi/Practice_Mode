@@ -249,14 +249,14 @@ void menu::start_practice_mode()
   }
 }
 
-void menu::stop_practice_mode()
+void menu::stop_practice_mode(std::string str)
 {
   // prova a caricare la scena salvata all'inizio della Practice Mode, se fallisce carica lo snapshot di backup
   if (!this->mixer_ctrl->load_scene(this->starter_scene))
     this->mixer_ctrl->load_scene(1);
   
   // mostra un messaggio di conferma del termine della Practice Mode
-  mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Practice Mode terminata. Scena ripristinata.");
+  mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, str.c_str());
   wrefresh(this->content_window);
   napms(2000);
 }
@@ -440,7 +440,7 @@ void menu::run()
         this->set_timer();
         break;
       case 4: // termina programma
-        stop_practice_mode();
+        stop_practice_mode("Uscita dal programma. Ripristino scena in corso...");
 
         this->running = false;
         break;
@@ -450,7 +450,7 @@ void menu::run()
           this->options[5] = "START PRACTICE";
           this->practice_mode = false;
 
-          stop_practice_mode();
+          stop_practice_mode("Practice Mode terminata. Scena ripristinata.");
         }
         else
         {
