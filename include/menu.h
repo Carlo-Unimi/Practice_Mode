@@ -9,6 +9,7 @@
 #include <ncurses.h>
 
 #include "parser.h"
+#include "mixer_controller.h"
 
 /**
  * @struct info
@@ -37,8 +38,9 @@ private:
   info routing;                  // informazioni di routing della scena
   parser *file_parser = nullptr; // inizializza e modifica 'routing'
 
-  std::string XR18_IP = "192.168.1.xxx"; // indirizzo IP del mixer
-  int XR18_PORT = 10024;                 // numero di porta del mixer
+  std::string XR18_IP = "192.168.1.xxx";  // indirizzo IP del mixer
+  int XR18_PORT = 10024;                  // numero di porta del mixer
+  mixer_controller *mixer_ctrl = nullptr; // gestore di connessione e invio messaggi al mixer
 
   WINDOW *menu_window;    // finestra generale del menu
   WINDOW *content_window; // finestra in cui vengono stampati i vari contenuti
