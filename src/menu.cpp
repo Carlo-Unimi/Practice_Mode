@@ -25,9 +25,12 @@ void menu::set_port()
   curs_set(0);
 
   if (buf[0] != '\0')
-    try {
+    try
+    {
       this->XR18_PORT = std::stoi(buf);
-    } catch (const std::exception &) {
+    }
+    catch (const std::exception &)
+    {
       mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 25, "[inserire un numero valido]");
       wrefresh(this->content_window);
       napms(2000);
@@ -45,16 +48,22 @@ void menu::set_timer()
   curs_set(0);
 
   if (buf[0] != '\0')
-    try {
+    try
+    {
       int minutes = std::stoi(buf);
-      if (minutes <= 0) {
+      if (minutes <= 0)
+      {
         mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "[inserire un numero maggiore di 0]");
         wrefresh(this->content_window);
         napms(2000);
-      } else {
+      }
+      else
+      {
         this->practice_minutes = minutes;
       }
-    } catch (const std::exception &) {
+    }
+    catch (const std::exception &)
+    {
       mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "[inserire un numero valido]");
       wrefresh(this->content_window);
       napms(2000);
@@ -63,7 +72,7 @@ void menu::set_timer()
 
 void menu::reset_timer()
 {
-  this->current_minutes = 0;
+  this->practice_start_time = std::chrono::steady_clock::now();
 }
 
 void menu::print_content()
@@ -131,11 +140,12 @@ menu::menu(std::vector<std::string> &title, std::vector<std::string> &options, s
   mixer_ctrl->connect();
 
   // salva la scena nello snapshot indicato nel file di configurazione
-  //this->mixer_ctrl->save_scene(this->starter_scene, "Broken_Scene");
+  // this->mixer_ctrl->save_scene(this->starter_scene, "Broken_Scene");
 
   // crea la finestra del menu
   this->menu_window = newwin(max_y, max_x, 0, 0);
   keypad(this->menu_window, TRUE);
+  wtimeout(this->menu_window, 1000); // timeout di 1 secondo per aggiornare il timer
   box(this->menu_window, 0, 0);
 
   // crea la finestra dei contenuti
@@ -174,13 +184,12 @@ void menu::draw_content_window()
       this->content.back() += "       [Stato: non connesso]";
     this->content.push_back("Mixer Port: " + std::to_string(this->XR18_PORT));
     this->content.push_back("Starter Scene: " + std::to_string(this->starter_scene));
-    
+
     this->content.push_back("");
     this->content.push_back("[i]: modifica l'indirizzo IP.");
     this->content.push_back("[p]: modifica la porta di connessione.");
     this->content.push_back("[r]: riprova a connetterti al mixer.");
 
-    
     break;
 
   //* Bus config
@@ -221,7 +230,16 @@ void menu::draw_content_window()
   case 5:
     if (this->practice_mode)
     {
-      this->content = {"Practice Mode attiva. Premi INVIO per terminare."};
+      auto now = std::chrono::steady_clock::now();
+      auto elapsed_seconds = std::chrono::duration_cast<std::chrono::seconds>(now - this->practice_start_time).count();
+      int total_seconds = this->practice_minutes * 60;
+      int remaining = total_seconds - (int)elapsed_seconds;
+      if (remaining < 0)
+        remaining = 0;
+      int mins = remaining / 60;
+      int secs = remaining % 60;
+      std::string timer_str = std::to_string(mins) + ":" + (secs < 10 ? "0" : "") + std::to_string(secs);
+      this->content = {"Practice Mode attiva.", "", "Tempo rimanente: " + timer_str, "", "Premi INVIO per terminare."};
     }
     else
     {
@@ -254,7 +272,7 @@ void menu::stop_practice_mode(std::string str)
   // prova a caricare la scena salvata all'inizio della Practice Mode, se fallisce carica lo snapshot di backup
   if (!this->mixer_ctrl->load_scene(this->starter_scene))
     this->mixer_ctrl->load_scene(1);
-  
+
   // mostra un messaggio di conferma del termine della Practice Mode
   mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, str.c_str());
   wrefresh(this->content_window);
@@ -270,6 +288,22 @@ void menu::run()
     display();
 
     int ch = wgetch(this->menu_window);
+
+    // controlla se il timer è scaduto
+    if (this->practice_mode)
+    {
+      auto now = std::chrono::steady_clock::now();
+      auto elapsed_seconds = std::chrono::duration_cast<std::chrono::seconds>(now - this->practice_start_time).count();
+      if (elapsed_seconds >= this->practice_minutes * 60)
+      {
+        this->options[5] = "START PRACTICE";
+        this->practice_mode = false;
+        stop_practice_mode("Tempo scaduto! Practice Mode terminata. Ripristino scena...");
+      }
+    }
+
+    if (ch == ERR)
+      continue; // nessun input, aggiorna solo il display
 
     switch (ch)
     {
@@ -410,7 +444,7 @@ void menu::run()
         }
       }
       break;
-    
+
     //* RICONNETTI AL MIXER
     case 'r':
     case 'R':
@@ -419,13 +453,13 @@ void menu::run()
       wrefresh(this->content_window);
       napms(2000);
       break;
-    
+
     //* MODIFICA IP
     case 'i':
     case 'I':
       this->set_IP();
       break;
-    
+
     //* MODIFICA PORTA
     case 'p':
     case 'P':
@@ -434,7 +468,7 @@ void menu::run()
 
     //* ENTER
     case 10:
-      switch(this->current_option)
+      switch (this->current_option)
       {
       case 3: // modifica timer
         this->set_timer();
@@ -456,6 +490,7 @@ void menu::run()
         {
           this->options[5] = "STOP  PRACTICE";
           this->practice_mode = true;
+          this->practice_start_time = std::chrono::steady_clock::now();
 
           start_practice_mode();
         }

@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <iterator>
+#include <chrono>
 
 #include <ncurses.h>
 
@@ -34,9 +35,10 @@ private:
   std::vector<std::string> options; // titoli delle opzioni del menu
   std::vector<std::string> title;   // ASCII art 'Practice Mode'
   std::vector<std::string> content; // informazioni da stampare nella finestra dei contenuti
-  int practice_minutes = 15;        // durata della Timer in minuti
-  int current_minutes = 0;          // minuti attuali del timer
-  bool practice_mode = false;       // 'true' se la Practice Mode è attiva, 'false' altrimenti
+
+  int practice_minutes = 15;                                  // durata della Timer in minuti
+  bool practice_mode = false;                                 // 'true' se la Practice Mode è attiva, 'false' altrimenti
+  std::chrono::steady_clock::time_point practice_start_time;  // istante di avvio della Practice Mode
 
   info routing;                  // informazioni di routing della scena
   parser *file_parser = nullptr; // inizializza e modifica 'routing'
