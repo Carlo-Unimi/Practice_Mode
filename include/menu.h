@@ -71,6 +71,16 @@ private:
    */
   void draw_content_window();
 
+  /**
+   * @brief gestisce la modifica dell'indirizzo IP del mixer
+   */
+  void set_IP();
+
+  /**
+   * @brief gestisce la modifica della porta del mixer
+   */
+  void set_port();
+
 public:
   /**
    * @brief costruttore per la classe 'menu'

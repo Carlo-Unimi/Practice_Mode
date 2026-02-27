@@ -1,5 +1,39 @@
 #include "../include/menu.h"
 
+void menu::set_IP()
+{
+  echo();
+  curs_set(1);
+  char buf[100];
+  mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Nuovo IP: ");
+  wgetnstr(this->content_window, buf, 99);
+  noecho();
+  curs_set(0);
+
+  if (buf[0] != '\0')
+    this->XR18_IP = std::string(buf);
+}
+
+void menu::set_port()
+{
+  echo();
+  curs_set(1);
+  char buf[100];
+  mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Nuova porta: ");
+  wgetnstr(this->content_window, buf, 99);
+  noecho();
+  curs_set(0);
+
+  if (buf[0] != '\0')
+    try {
+      this->XR18_PORT = std::stoi(buf);
+    } catch (const std::exception &) {
+      mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 25, "[inserire un numero valido]");
+      wrefresh(this->content_window);
+      napms(2000);
+    }
+}
+
 void menu::print_content()
 {
   for (size_t i = 0; i < this->content.size(); i++)
@@ -59,6 +93,9 @@ menu::menu(std::vector<std::string> &title, std::vector<std::string> &options, s
   this->routing.instr2bus = this->file_parser->get_instr2bus();
   this->routing.instr2ch = this->file_parser->get_instr2ch();
 
+  // inizializza il mixer_controller con l'indirizzo IP e la porta del mixer
+  this->mixer_ctrl = new mixer_controller(this->XR18_IP, this->XR18_PORT);
+
   // crea la finestra del menu
   this->menu_window = newwin(max_y, max_x, 0, 0);
   keypad(this->menu_window, TRUE);
@@ -71,8 +108,6 @@ menu::menu(std::vector<std::string> &title, std::vector<std::string> &options, s
   // stampa il titolo centrato
   for (size_t i = 0; i < this->title.size(); i++)
     mvwprintw(this->menu_window, i + 1, (max_x - this->title[i].length()) / 2, this->title[i].c_str());
-
-  menu::draw_options();
 }
 
 menu::~menu()
@@ -82,6 +117,7 @@ menu::~menu()
 
   delwin(this->content_window);
   delwin(this->menu_window);
+  delete this->mixer_ctrl;
 }
 
 void menu::draw_content_window()
@@ -93,6 +129,14 @@ void menu::draw_content_window()
   {
   //* Mixer config
   case 0:
+    this->content.clear();
+    this->content.push_back("Mixer IP: " + this->XR18_IP);
+    this->content.push_back("Mixer Port: " + std::to_string(this->XR18_PORT));
+
+    this->content.push_back("");
+    this->content.push_back("[i]: modifica l'indirizzo IP.");
+    this->content.push_back("[p]: modifica la porta di connessione.");
+    this->content.push_back("[r]: riprova a connetterti al mixer.");
     break;
 
   //* Bus config
@@ -285,6 +329,24 @@ void menu::run()
           this->file_parser->update_map(this->routing.instr2ch, key, val);
         }
       }
+      break;
+    
+    //* RICONNETTI AL MIXER
+    case 'r':
+    case 'R':
+      
+      break;
+    
+    //* MODIFICA IP
+    case 'i':
+    case 'I':
+      this->set_IP();
+      break;
+    
+    //* MODIFICA PORTA
+    case 'p':
+    case 'P':
+      this->set_port();
       break;
 
     //* ENTER
