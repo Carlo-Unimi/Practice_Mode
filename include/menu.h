@@ -34,6 +34,7 @@ private:
   std::vector<std::string> options; // titoli delle opzioni del menu
   std::vector<std::string> title;   // ASCII art 'Practice Mode'
   std::vector<std::string> content; // informazioni da stampare nella finestra dei contenuti
+  int practice_minutes = 15;        // durata della Practice Mode in minuti
 
   info routing;                  // informazioni di routing della scena
   parser *file_parser = nullptr; // inizializza e modifica 'routing'
@@ -80,6 +81,11 @@ private:
    * @brief gestisce la modifica della porta del mixer
    */
   void set_port();
+
+  /**
+   * @brief setta il timer della Practice Mode
+   */
+  void set_timer();
 
 public:
   /**

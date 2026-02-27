@@ -34,6 +34,33 @@ void menu::set_port()
     }
 }
 
+void menu::set_timer()
+{
+  echo();
+  curs_set(1);
+  char buf[3];
+  mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Practice Mode (minuti): ");
+  wgetnstr(this->content_window, buf, 99);
+  noecho();
+  curs_set(0);
+
+  if (buf[0] != '\0')
+    try {
+      int minutes = std::stoi(buf);
+      if (minutes <= 0) {
+        mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "[inserire un numero maggiore di 0]");
+        wrefresh(this->content_window);
+        napms(2000);
+      } else {
+        this->practice_minutes = minutes;
+      }
+    } catch (const std::exception &) {
+      mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "[inserire un numero valido]");
+      wrefresh(this->content_window);
+      napms(2000);
+    }
+}
+
 void menu::print_content()
 {
   for (size_t i = 0; i < this->content.size(); i++)
@@ -170,6 +197,7 @@ void menu::draw_content_window()
 
   //* Timer config
   case 3:
+    this->content = {"Durata Practice Mode: " + std::to_string(this->practice_minutes) + " minuti", "", "[ENTER]: modifica la durata."};
     break;
 
   //* Exit
@@ -359,8 +387,18 @@ void menu::run()
 
     //* ENTER
     case 10:
-      if (current_option == 4)
-        running = false;
+      switch(this->current_option)
+      {
+      case 3: // modifica timer
+        this->set_timer();
+        break;
+      case 4: // termina programma
+        this->running = false;
+        break;
+      case 5: // avvia Practice Mode
+        this->content = {"Practice Mode iniziata! Premi INVIO per terminare."};
+        break;
+      }
       break;
     }
   }
