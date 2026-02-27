@@ -405,6 +405,8 @@ void menu::run()
         this->set_timer();
         break;
       case 4: // termina programma
+        // this->mixer_ctrl->load_scene();    caricherà la scena che era attiva nel mixer prima dell'avvio del programma.
+        
         this->running = false;
         break;
       case 5: // avvia Practice Mode

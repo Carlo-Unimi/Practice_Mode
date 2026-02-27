@@ -33,8 +33,6 @@ private:
 
   std::string mixer_ip;
   uint16_t mixer_port;
-  
-  oscpkt::Message msg;
 
   bool send_udp_packet(const void* data, size_t size);
 
@@ -65,11 +63,34 @@ public:
 
   /**
    * @brief invia un messaggio OSC al mixer.
-   * @param address il path dell'indirizzo OSC
-   * @param msg il messaggio OSC da inviare, già costruito con i relativi argomenti
+   * @param n_ch il numero del canale (01-16)
+   * @param n_bus il numero del bus (01-06)
+   * @param value il valore da inviare al fader (0.0-1.0)
    * @return true se l'invio è avvenuto con successo, false altrimenti
    */
-  bool send_float(const std::string& address, float value);
+  bool send_float(const std::string &n_ch, const std::string &n_bus, float value);
+
+  /**
+   * @brief invia il messaggio OSC di salvataggio scena al mixer nello slot 01.
+   * @param snap_index il numero di snapshot da salvare (1-32)
+   * @param snap_name il nome della scena da salvare (default: practice_mode)
+   * @return true se l'invio è avvenuto con successo, false altrimenti
+   */
+  bool save_scene(int snap_index = 1, std::string snap_name = "practice_mode");
+
+  /**
+   * @brief invia il messaggio OSC di caricamento scena [01] al mixer.
+   * @return true se l'invio è avvenuto con successo, false altrimenti
+   */
+  bool load_scene(int snap_index = 1);
+
+  /**
+   * @brief azzera i fader di una mandata bus, a parte quello specificato nel parametro 'keep_ch'.
+   * @param keep_ch il numero di canale da mantenere (01-16)
+   * @param bus il numero di bus su cui operare (01-06)
+   * @return true se l'invio è avvenuto con successo, false altrimenti
+   */
+  bool zero_bus(std::string bus, std::string keep_ch);
 };
 
 #endif

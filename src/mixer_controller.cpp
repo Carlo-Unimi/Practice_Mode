@@ -74,16 +74,17 @@ bool mixer_controller::send_udp_packet(const void *data, size_t size)
     return false;
 
   int sent_bytes = ::sendto(sock_fd, static_cast<const char *>(data), static_cast<int>(size), 0, reinterpret_cast<const sockaddr *>(&remote_addr), sizeof(remote_addr));
-
   return (sent_bytes == static_cast<int>(size));
 }
 
-bool mixer_controller::send_float(const std::string &address, float value)
+bool mixer_controller::send_float(const std::string &n_ch, const std::string &n_bus, float value)
 {
   if (!isConnected)
     return false;
-
+    
   // inizializza il messaggio OSC
+  oscpkt::Message msg;
+  std::string address = "/ch/" + n_ch + "/bus/" + n_bus + "/fader";
   msg.init(address).pushFloat(value);
 
   // creazine pacchetto OSC
@@ -94,5 +95,41 @@ bool mixer_controller::send_float(const std::string &address, float value)
     return false;
 
   // invia il pacchetto OSC tramite UDP
+  return send_udp_packet(pw.packetData(), pw.packetSize());
+}
+
+bool mixer_controller::save_scene(int snap_index, std::string snap_name)
+{
+  if (!isConnected || snap_index < 1 || snap_index > 32)
+    return false;
+  
+  std::string address = "/-snap/save/";
+  oscpkt::Message msg;
+  msg.init(address).pushInt32(snap_index).pushStr(snap_name);
+
+  oscpkt::PacketWriter pw;
+  pw.addMessage(msg);
+
+  if (!pw.isOk())
+    return false;
+
+  return send_udp_packet(pw.packetData(), pw.packetSize());
+}
+
+bool mixer_controller::load_scene(int snap_index)
+{
+  if (!isConnected)
+    return false;
+
+  std::string address = "/-snap/recall/";
+  oscpkt::Message msg;
+  msg.init(address).pushInt32(snap_index);
+
+  oscpkt::PacketWriter pw;
+  pw.addMessage(msg);
+
+  if (!pw.isOk())
+    return false;
+
   return send_udp_packet(pw.packetData(), pw.packetSize());
 }
