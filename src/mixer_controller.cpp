@@ -133,3 +133,18 @@ bool mixer_controller::load_scene(int snap_index)
 
   return send_udp_packet(pw.packetData(), pw.packetSize());
 }
+
+bool mixer_controller::zero_bus(std::string bus, std::string keep_ch)
+{
+  if (!isConnected)
+    return false;
+
+  for (int ch = 1; ch <= 16; ch++)
+  {
+    std::string n_ch = (ch < 10) ? "0" + std::to_string(ch) : std::to_string(ch);
+    // nodifica il livello di tutti i canali tranne quello da mantenere
+    if (n_ch != keep_ch)
+      send_float(n_ch, bus, 0.0f);
+  }
+  return true;
+}

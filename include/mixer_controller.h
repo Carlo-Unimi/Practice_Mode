@@ -62,7 +62,7 @@ public:
   void disconnect();
 
   /**
-   * @brief invia un messaggio OSC al mixer.
+   * @brief invia un messaggio OSC al mixer per impostare il valore di un fader in mandata ad un bus.
    * @param n_ch il numero del canale (01-16)
    * @param n_bus il numero del bus (01-06)
    * @param value il valore da inviare al fader (0.0-1.0)
