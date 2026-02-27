@@ -131,7 +131,7 @@ menu::menu(std::vector<std::string> &title, std::vector<std::string> &options, s
   mixer_ctrl->connect();
 
   // salva la scena nello snapshot indicato nel file di configurazione
-  this->mixer_ctrl->save_scene(this->starter_scene, "Broken_Scene");
+  //this->mixer_ctrl->save_scene(this->starter_scene, "Broken_Scene");
 
   // crea la finestra del menu
   this->menu_window = newwin(max_y, max_x, 0, 0);
@@ -231,6 +231,34 @@ void menu::draw_content_window()
   }
 
   print_content();
+}
+
+void menu::start_practice_mode()
+{
+  // salva la scena nello snapshot indicato nel file di configurazione, in modo da poterla caricare alla fine della Practice Mode
+  this->mixer_ctrl->save_scene(this->starter_scene, "Broken_Scene");
+  this->mixer_ctrl->save_scene(1, "backup");
+
+  // azzero i volumi dei canali nei bus di ascolto, tranne il canale del proprio strumento nel proprio bus
+  for (const auto &pair : this->routing.instr2bus)
+  {
+    std::string instr = pair.first;
+    std::string bus = pair.second;
+    std::string ch = this->routing.instr2ch[instr];
+    this->mixer_ctrl->zero_bus(bus, ch);
+  }
+}
+
+void menu::stop_practice_mode()
+{
+  // prova a caricare la scena salvata all'inizio della Practice Mode, se fallisce carica lo snapshot di backup
+  if (!this->mixer_ctrl->load_scene(this->starter_scene))
+    this->mixer_ctrl->load_scene(1);
+  
+  // mostra un messaggio di conferma del termine della Practice Mode
+  mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Practice Mode terminata. Scena ripristinata.");
+  wrefresh(this->content_window);
+  napms(2000);
 }
 
 void menu::run()
@@ -412,7 +440,7 @@ void menu::run()
         this->set_timer();
         break;
       case 4: // termina programma
-        this->mixer_ctrl->load_scene(this->starter_scene);
+        stop_practice_mode();
 
         this->running = false;
         break;
@@ -421,11 +449,15 @@ void menu::run()
         {
           this->options[5] = "START PRACTICE";
           this->practice_mode = false;
+
+          stop_practice_mode();
         }
         else
         {
           this->options[5] = "STOP  PRACTICE";
           this->practice_mode = true;
+
+          start_practice_mode();
         }
         break;
       }

@@ -114,6 +114,16 @@ public:
    * @brief fa partire il programma e gestisce gli input dell'utente per la navigazione nel menu.
    */
   void run();
+
+  /**
+   * @brief avvia la Practice Mode
+   */
+  void start_practice_mode();
+
+  /**
+   * @brief ferma la Practice Mode
+   */
+  void stop_practice_mode();
 };
 
 #endif
