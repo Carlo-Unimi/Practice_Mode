@@ -40,6 +40,7 @@ private:
 
   info routing;                  // informazioni di routing della scena
   parser *file_parser = nullptr; // inizializza e modifica 'routing'
+  int starter_scene;             // snapshot già caricato sul mixer all'avvio del programma
 
   std::string XR18_IP = "192.168.1.xxx";  // indirizzo IP del mixer
   int XR18_PORT = 10024;                  // numero di porta del mixer

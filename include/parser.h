@@ -12,9 +12,10 @@
 class parser
 {
 private:
-  std::string filename;                     // nome del file da cui caricare la configurazione del routing
+  std::string filename;                             // nome del file da cui caricare la configurazione del routing
   std::map<std::string, std::string> instr2bus;     // mappa: instrument -> bus
   std::map<std::string, std::string> instr2ch;      // mappa: instrument -> input channel
+  int starter_scene;                                // snapshot già caricato sul mixer all'avvio del programma
 
   /**
    * @brief restituisce 'key' e 'value' da una riga del file di configurazione.
@@ -50,6 +51,12 @@ public:
    * @return instr2ch
    */
   std::map<std::string, std::string> get_instr2ch();
+
+  /**
+   * @brief getter per lo snapshot già caricato sul mixer all'avvio del programma
+   * @return starter_scene
+   */
+  int get_starter_scene();
 
   /**
    * @brief inserisce in una mappa la coppia [string, string]; se la chiave 'string' è già presente, modifica il valore 'string' associato.

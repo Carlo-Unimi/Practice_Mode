@@ -124,6 +124,7 @@ menu::menu(std::vector<std::string> &title, std::vector<std::string> &options, s
   this->file_parser = new parser(filename);
   this->routing.instr2bus = this->file_parser->get_instr2bus();
   this->routing.instr2ch = this->file_parser->get_instr2ch();
+  this->starter_scene = this->file_parser->get_starter_scene();
 
   // inizializza il mixer_controller con l'indirizzo IP e la porta del mixer
   this->mixer_ctrl = new mixer_controller(this->XR18_IP, this->XR18_PORT);
@@ -406,7 +407,7 @@ void menu::run()
         break;
       case 4: // termina programma
         // this->mixer_ctrl->load_scene();    caricherà la scena che era attiva nel mixer prima dell'avvio del programma.
-        
+
         this->running = false;
         break;
       case 5: // avvia Practice Mode

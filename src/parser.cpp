@@ -31,6 +31,11 @@ parser::parser(std::string &filename)
   if (file.is_open())
   {
     std::string line;
+
+    // legge la prima riga del file di configurazione, che contiene l'indice dello snapshot già caricato sul mixer all'avvio del programma
+    std::getline(file, line);
+    this->starter_scene = std::stoi(line);
+
     while (std::getline(file, line))
     {
       if (line.empty())
@@ -63,6 +68,11 @@ std::map<std::string, std::string> parser::get_instr2bus()
 std::map<std::string, std::string> parser::get_instr2ch()
 {
   return this->instr2ch;
+}
+
+int parser::get_starter_scene()
+{
+  return this->starter_scene;
 }
 
 void parser::update_map(std::map<std::string, std::string> &map, std::string &key, std::string &value)
