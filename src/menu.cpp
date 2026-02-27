@@ -3,7 +3,13 @@
 void menu::print_content()
 {
   for (size_t i = 0; i < this->content.size(); i++)
+  {
+    if ((this->current_option == 1 || this->current_option == 2) && (int)i == this->selected_item + 2)
+      wattron(this->content_window, A_REVERSE);
     mvwprintw(this->content_window, 1 + i, 2, this->content[i].c_str());
+    if ((this->current_option == 1 || this->current_option == 2) && (int)i == this->selected_item + 2)
+      wattroff(this->content_window, A_REVERSE);
+  }
 }
 
 void menu::draw_option_line(int h)
@@ -46,6 +52,7 @@ menu::menu(std::vector<std::string> &title, std::vector<std::string> &options, s
   int max_x = getmaxx(stdscr);
   this->running = true;
   this->current_option = 0;
+  this->selected_item = 0;
 
   // parsa il file di config passato da riga di comando e popola 'routing'
   this->file_parser = new parser(filename);
@@ -91,7 +98,7 @@ void menu::draw_content_window()
   //* Bus config
   case 1:
     this->content.clear();
-    this->content = {" [Strumento]   -> [Bus]", ""};
+    this->content = {" [Strumento]   -> [Bus]         [S: str] [B: bus]", ""};
     for (const auto &pair : this->routing.instr2bus)
     {
       int len = 12 - pair.first.length();
@@ -103,7 +110,7 @@ void menu::draw_content_window()
   //* Channels config
   case 2:
     this->content.clear();
-    this->content = {" [Strumento]   -> [Canale]", ""};
+    this->content = {" [Strumento]   -> [Canale]      [S: str] [C: ch]", ""};
     for (const auto &pair : this->routing.instr2ch)
     {
       int len = 12 - pair.first.length();
@@ -145,19 +152,139 @@ void menu::run()
     //* OPZIONE PRECEDENTE
     case KEY_LEFT:
     case 'a':
+      this->selected_item = 0;
       if (this->current_option > 0)
-				this->current_option--;
-			else
-				this->current_option = this->options.size() - 1;
+        this->current_option--;
+      else
+        this->current_option = this->options.size() - 1;
       break;
 
     //* OPZIONE SUCCESSIVA
     case KEY_RIGHT:
     case 'd':
+      this->selected_item = 0;
       if (this->current_option < (int)this->options.size() - 1)
-				this->current_option++;
-			else
-				this->current_option = 0;
+        this->current_option++;
+      else
+        this->current_option = 0;
+      break;
+
+    //* ITEM PRECEDENTE
+    case KEY_UP:
+    case 'w':
+      if ((this->current_option == 1 || this->current_option == 2) && this->selected_item > 0)
+        this->selected_item--;
+      break;
+
+    //* ITEM SUCCESSIVO
+    case KEY_DOWN:
+    case 'z':
+      if (this->current_option == 1)
+      {
+        if (this->selected_item < (int)this->routing.instr2bus.size() - 1)
+          this->selected_item++;
+      }
+      else if (this->current_option == 2)
+      {
+        if (this->selected_item < (int)this->routing.instr2ch.size() - 1)
+          this->selected_item++;
+      }
+      break;
+
+    //* MODIFICA STRUMENTO
+    case 's':
+    case 'S':
+      if (this->current_option == 1 || this->current_option == 2)
+      {
+        auto it = this->routing.instr2bus.begin();
+        if (this->current_option == 1 && this->selected_item < (int)this->routing.instr2bus.size())
+          std::advance(it, this->selected_item);
+        else if (this->current_option == 2 && this->selected_item < (int)this->routing.instr2ch.size())
+        {
+          auto it2 = this->routing.instr2ch.begin();
+          std::advance(it2, this->selected_item);
+          it = this->routing.instr2bus.find(it2->first);
+        }
+        else
+          break;
+
+        if (it == this->routing.instr2bus.end())
+          break;
+
+        std::string old_key = it->first;
+        std::string bus_val = it->second;
+        std::string ch_val = this->routing.instr2ch[old_key];
+
+        echo();
+        curs_set(1);
+        char buf[100];
+        mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Nuovo nome: ");
+        wgetnstr(this->content_window, buf, 99);
+        noecho();
+        curs_set(0);
+        std::string new_key = buf;
+
+        if (!new_key.empty() && new_key != old_key)
+        {
+          // rimuove la vecchia associazione
+          this->file_parser->delete_assoc(this->routing.instr2bus, old_key);
+          this->file_parser->delete_assoc(this->routing.instr2ch, old_key);
+
+          // inserisce la nuova associazione
+          this->file_parser->update_map(this->routing.instr2bus, new_key, bus_val);
+          this->file_parser->update_map(this->routing.instr2ch, new_key, ch_val);
+        }
+      }
+      break;
+
+    //* MODIFICA BUS
+    case 'b':
+    case 'B':
+      if (this->current_option == 1 && this->selected_item < (int)this->routing.instr2bus.size())
+      {
+        auto it = this->routing.instr2bus.begin();
+        std::advance(it, this->selected_item);
+
+        echo();
+        curs_set(1);
+        char buf[100];
+        mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Nuovo bus: ");
+        wgetnstr(this->content_window, buf, 99);
+        noecho();
+        curs_set(0);
+
+        if (buf[0] != '\0')
+        {
+          std::string key = it->first;
+          std::string val = std::string(buf);
+          this->file_parser->update_map(this->routing.instr2bus, key, val);
+        }
+      }
+      break;
+
+    //* MODIFICA CANALE
+    case 'c':
+    case 'C':
+      if (this->current_option == 2 && this->selected_item < (int)this->routing.instr2ch.size())
+      {
+        auto it = this->routing.instr2ch.begin();
+        std::advance(it, this->selected_item);
+
+        echo();
+        curs_set(1);
+        char buf[100];
+        mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Nuovo canale: ");
+        wgetnstr(this->content_window, buf, 99);
+        noecho();
+        curs_set(0);
+
+        if (buf[0] != '\0')
+        {
+          std::string key = it->first;
+          std::string val = std::string(buf);
+          this->file_parser->update_map(this->routing.instr2ch, key, val);
+        }
+      }
       break;
 
     //* ENTER

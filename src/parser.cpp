@@ -74,7 +74,7 @@ void parser::update_map(std::map<std::string, std::string> &map, std::string &ke
     map.insert(std::pair<std::string, std::string>(key, value));
 }
 
-void parser::delet_assoc(std::map<std::string, std::string> &map, std::string &key)
+void parser::delete_assoc(std::map<std::string, std::string> &map, std::string &key)
 {
   auto it = map.find(key);
   if (it != map.end())

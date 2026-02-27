@@ -64,7 +64,7 @@ public:
    * @param map mappa su cui operare
    * @param key chiave da eliminare
    */
-  void delet_assoc(std::map<std::string, std::string> &map, std::string &key);
+  void delete_assoc(std::map<std::string, std::string> &map, std::string &key);
 };
 
 #endif
