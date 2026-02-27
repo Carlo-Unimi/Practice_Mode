@@ -173,11 +173,14 @@ void menu::draw_content_window()
     else
       this->content.back() += "       [Stato: non connesso]";
     this->content.push_back("Mixer Port: " + std::to_string(this->XR18_PORT));
-
+    this->content.push_back("Starter Scene: " + std::to_string(this->starter_scene));
+    
     this->content.push_back("");
     this->content.push_back("[i]: modifica l'indirizzo IP.");
     this->content.push_back("[p]: modifica la porta di connessione.");
     this->content.push_back("[r]: riprova a connetterti al mixer.");
+
+    
     break;
 
   //* Bus config
@@ -418,7 +421,6 @@ void menu::run()
         {
           this->options[5] = "START PRACTICE";
           this->practice_mode = false;
-          this->reset_timer();
         }
         else
         {
