@@ -130,6 +130,9 @@ menu::menu(std::vector<std::string> &title, std::vector<std::string> &options, s
   this->mixer_ctrl = new mixer_controller(this->XR18_IP, this->XR18_PORT);
   mixer_ctrl->connect();
 
+  // salva la scena nello snapshot indicato nel file di configurazione
+  this->mixer_ctrl->save_scene(this->starter_scene, "Broken_Scene");
+
   // crea la finestra del menu
   this->menu_window = newwin(max_y, max_x, 0, 0);
   keypad(this->menu_window, TRUE);
@@ -406,7 +409,7 @@ void menu::run()
         this->set_timer();
         break;
       case 4: // termina programma
-        // this->mixer_ctrl->load_scene();    caricherà la scena che era attiva nel mixer prima dell'avvio del programma.
+        this->mixer_ctrl->load_scene(this->starter_scene);
 
         this->running = false;
         break;

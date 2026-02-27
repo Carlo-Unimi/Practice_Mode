@@ -71,15 +71,16 @@ public:
   bool send_float(const std::string &n_ch, const std::string &n_bus, float value);
 
   /**
-   * @brief invia il messaggio OSC di salvataggio scena al mixer nello slot 01.
-   * @param snap_index il numero di snapshot da salvare (1-32)
+   * @brief invia il messaggio OSC di salvataggio scena al mixer nello slot specificato.
+   * @param snap_index il numero dello snapshot in cui salvare la scena corrente (1-32)
    * @param snap_name il nome della scena da salvare (default: practice_mode)
    * @return true se l'invio è avvenuto con successo, false altrimenti
    */
   bool save_scene(int snap_index = 1, std::string snap_name = "practice_mode");
 
   /**
-   * @brief invia il messaggio OSC di caricamento scena [01] al mixer.
+   * @brief invia il messaggio OSC di caricamento scena al mixer nello slot specificato.
+   * @param snap_index il numero dello snapshot da caricare (1-32)
    * @return true se l'invio è avvenuto con successo, false altrimenti
    */
   bool load_scene(int snap_index = 1);
