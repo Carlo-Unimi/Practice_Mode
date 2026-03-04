@@ -20,6 +20,43 @@ mixer_controller::~mixer_controller()
 #endif
 }
 
+bool mixer_controller::probe(int timeout_sec)
+{
+  // invia un messaggio OSC '/xinfo' al mixer
+  oscpkt::Message msg;
+  msg.init("/xinfo");
+
+  oscpkt::PacketWriter pw;
+  pw.addMessage(msg);
+
+  if (!pw.isOk())
+    return false;
+
+  int sent = ::sendto(sock_fd, static_cast<const char *>(pw.packetData()), static_cast<int>(pw.packetSize()), 0,
+                      reinterpret_cast<const sockaddr *>(&remote_addr), sizeof(remote_addr));
+  if (sent <= 0)
+    return false;
+
+  // attende una risposta con timeout
+  fd_set read_fds;
+  FD_ZERO(&read_fds);
+  FD_SET(sock_fd, &read_fds);
+
+  struct timeval tv;
+  tv.tv_sec = timeout_sec;
+  tv.tv_usec = 0;
+
+  int result = ::select(sock_fd + 1, &read_fds, nullptr, nullptr, &tv);
+  if (result > 0 && FD_ISSET(sock_fd, &read_fds))
+  {
+    char buf[512];
+    int n = ::recvfrom(sock_fd, buf, sizeof(buf), 0, nullptr, nullptr);
+    return (n > 0);
+  }
+
+  return false;
+}
+
 bool mixer_controller::connect()
 {
   if (this->isConnected)
@@ -46,7 +83,11 @@ bool mixer_controller::connect()
     return false;
   }
 
-  isConnected = true;
+  // verifica che il mixer sia effettivamente raggiungibile
+  isConnected = probe();
+  if (!isConnected)
+    disconnect();
+
   return isConnected;
 }
 

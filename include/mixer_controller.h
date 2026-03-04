@@ -13,6 +13,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <sys/select.h>
 #endif
 
 #include "../oscpkt.hh"
@@ -35,6 +36,13 @@ private:
   uint16_t mixer_port;
 
   bool send_udp_packet(const void *data, size_t size);
+
+  /**
+   * @brief invia un messaggio OSC '/xinfo' al mixer e attende una risposta per verificare la raggiungibilità.
+   * @param timeout_sec il timeout in secondi per attendere la risposta (default: 2)
+   * @return true se il mixer ha risposto, false altrimenti
+   */
+  bool probe(int timeout_sec = 2);
 
 public:
   bool isConnected;
