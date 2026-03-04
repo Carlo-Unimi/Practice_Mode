@@ -448,8 +448,13 @@ void menu::run()
     //* RICONNETTI AL MIXER
     case 'r':
     case 'R':
+      this->mixer_ctrl->set_ip(this->XR18_IP);
+      this->mixer_ctrl->set_port(this->XR18_PORT);
       this->mixer_ctrl->connect();
-      mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Riconnessione al mixer in corso...");
+      if (this->mixer_ctrl->isConnected)
+        mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Connessione riuscita!");
+      else
+        mvwprintw(this->content_window, getmaxy(this->content_window) - 2, 2, "Connessione fallita. Controlla IP e porta.");
       wrefresh(this->content_window);
       napms(2000);
       break;

@@ -2,22 +2,22 @@
 
 mixer_controller::mixer_controller(std::string ip, uint16_t port) : mixer_ip(ip), mixer_port(port), isConnected(false)
 {
-  #ifdef _WIN32
-    sock_fd = INVALID_SOCKET;
-    WSADATA wsaData;
-    WSAStartup(MAKEWORD(2, 2), &wsaData);
-  #else
-    sock_fd = -1;
-  #endif
-    memset(&remote_addr, 0, sizeof(remote_addr));
+#ifdef _WIN32
+  sock_fd = INVALID_SOCKET;
+  WSADATA wsaData;
+  WSAStartup(MAKEWORD(2, 2), &wsaData);
+#else
+  sock_fd = -1;
+#endif
+  memset(&remote_addr, 0, sizeof(remote_addr));
 }
 
 mixer_controller::~mixer_controller()
 {
   disconnect();
-  #ifdef _WIN32
-    WSACleanup();
-  #endif
+#ifdef _WIN32
+  WSACleanup();
+#endif
 }
 
 bool mixer_controller::connect()
@@ -28,13 +28,13 @@ bool mixer_controller::connect()
   // crea socket UDP
   sock_fd = ::socket(AF_INET, SOCK_DGRAM, 0);
 
-  #ifdef _WIN32
-    if (sock_fd == INVALID_SOCKET)
-      return false;
-  #else
-    if (sock_fd < 0)
-      return false;
-  #endif
+#ifdef _WIN32
+  if (sock_fd == INVALID_SOCKET)
+    return false;
+#else
+  if (sock_fd < 0)
+    return false;
+#endif
 
   // configurazione indirizzo remoto
   remote_addr.sin_family = AF_INET;
@@ -53,19 +53,19 @@ bool mixer_controller::connect()
 void mixer_controller::disconnect()
 {
   isConnected = false;
-  #ifdef _WIN32
-    if (sock_fd != INVALID_SOCKET)
-    {
-      closesocket(sock_fd);
-      sock_fd = INVALID_SOCKET;
-    }
-  #else
-    if (sock_fd >= 0)
-    {
-      ::close(sock_fd);
-      sock_fd = -1;
-    }
-  #endif
+#ifdef _WIN32
+  if (sock_fd != INVALID_SOCKET)
+  {
+    closesocket(sock_fd);
+    sock_fd = INVALID_SOCKET;
+  }
+#else
+  if (sock_fd >= 0)
+  {
+    ::close(sock_fd);
+    sock_fd = -1;
+  }
+#endif
 }
 
 bool mixer_controller::send_udp_packet(const void *data, size_t size)
@@ -81,7 +81,7 @@ bool mixer_controller::send_float(const std::string &n_ch, const std::string &n_
 {
   if (!isConnected)
     return false;
-    
+
   // inizializza il messaggio OSC
   oscpkt::Message msg;
   std::string address = "/ch/" + n_ch + "/bus/" + n_bus + "/fader";
@@ -102,7 +102,7 @@ bool mixer_controller::save_scene(int snap_index, std::string snap_name)
 {
   if (!isConnected || snap_index < 1 || snap_index > 32)
     return false;
-  
+
   std::string address = "/-snap/save/";
   oscpkt::Message msg;
   msg.init(address).pushInt32(snap_index).pushStr(snap_name);
@@ -132,6 +132,16 @@ bool mixer_controller::load_scene(int snap_index)
     return false;
 
   return send_udp_packet(pw.packetData(), pw.packetSize());
+}
+
+void mixer_controller::set_ip(const std::string &ip)
+{
+  this->mixer_ip = ip;
+}
+
+void mixer_controller::set_port(uint16_t port)
+{
+  this->mixer_port = port;
 }
 
 bool mixer_controller::zero_bus(std::string bus, std::string keep_ch)

@@ -34,18 +34,18 @@ private:
   std::string mixer_ip;
   uint16_t mixer_port;
 
-  bool send_udp_packet(const void* data, size_t size);
+  bool send_udp_packet(const void *data, size_t size);
 
 public:
   bool isConnected;
-  
+
   /**
    * @brief costruttore del mixer_controller.
    * @param ip l'indirizzo IP del mixer
    * @param port la porta UDP su cui il mixer è in ascolto
    */
   mixer_controller(std::string ip, uint16_t port);
-  
+
   /**
    * @brief distruttore del mixer_controller, chiude la connessione se ancora aperta.
    */
@@ -55,7 +55,7 @@ public:
    * @brief stabilisce la connessione al mixer.
    */
   bool connect();
-  
+
   /**
    * @brief chiude la connessione al mixer.
    */
@@ -92,6 +92,18 @@ public:
    * @return true se l'invio è avvenuto con successo, false altrimenti
    */
   bool zero_bus(std::string bus, std::string keep_ch);
+
+  /**
+   * @brief aggiorna l'indirizzo IP del mixer.
+   * @param ip il nuovo indirizzo IP
+   */
+  void set_ip(const std::string &ip);
+
+  /**
+   * @brief aggiorna la porta UDP del mixer.
+   * @param port la nuova porta
+   */
+  void set_port(uint16_t port);
 };
 
 #endif

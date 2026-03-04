@@ -36,15 +36,15 @@ private:
   std::vector<std::string> title;   // ASCII art 'Practice Mode'
   std::vector<std::string> content; // informazioni da stampare nella finestra dei contenuti
 
-  int practice_minutes = 15;                                  // durata della Timer in minuti
-  bool practice_mode = false;                                 // 'true' se la Practice Mode è attiva, 'false' altrimenti
-  std::chrono::steady_clock::time_point practice_start_time;  // istante di avvio della Practice Mode
+  int practice_minutes = 15;                                 // durata della Timer in minuti
+  bool practice_mode = false;                                // 'true' se la Practice Mode è attiva, 'false' altrimenti
+  std::chrono::steady_clock::time_point practice_start_time; // istante di avvio della Practice Mode
 
   info routing;                  // informazioni di routing della scena
   parser *file_parser = nullptr; // inizializza e modifica 'routing'
   int starter_scene;             // snapshot già caricato sul mixer all'avvio del programma
 
-  std::string XR18_IP = "192.168.1.xxx";  // indirizzo IP del mixer
+  std::string XR18_IP = "192.168.1.1";    // indirizzo IP del mixer
   int XR18_PORT = 10024;                  // numero di porta del mixer
   mixer_controller *mixer_ctrl = nullptr; // gestore di connessione e invio messaggi al mixer
 
