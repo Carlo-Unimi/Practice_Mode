@@ -125,7 +125,7 @@ bool mixer_controller::send_float(const std::string &n_ch, const std::string &n_
 
   // inizializza il messaggio OSC
   oscpkt::Message msg;
-  std::string address = "/ch/" + n_ch + "/bus/" + n_bus + "/fader";
+  std::string address = "/ch/" + n_ch + "/mix/" + n_bus + "/level";
   msg.init(address).pushFloat(value);
 
   // creazine pacchetto OSC
@@ -144,9 +144,27 @@ bool mixer_controller::save_scene(int snap_index, std::string snap_name)
   if (!isConnected || snap_index < 1 || snap_index > 32)
     return false;
 
-  std::string address = "/-snap/save/";
+  // imposta l'indice dello snapshot
+  oscpkt::Message idx_msg;
+  idx_msg.init("/-snap/index").pushInt32(snap_index);
+
+  oscpkt::PacketWriter idx_pw;
+  idx_pw.addMessage(idx_msg);
+  if (!idx_pw.isOk() || !send_udp_packet(idx_pw.packetData(), idx_pw.packetSize()))
+    return false;
+
+  // imposta il nome dello snapshot
+  oscpkt::Message name_msg;
+  name_msg.init("/-snap/name").pushStr(snap_name);
+
+  oscpkt::PacketWriter name_pw;
+  name_pw.addMessage(name_msg);
+  if (!name_pw.isOk() || !send_udp_packet(name_pw.packetData(), name_pw.packetSize()))
+    return false;
+
+  // salva lo snapshot
   oscpkt::Message msg;
-  msg.init(address).pushInt32(snap_index).pushStr(snap_name);
+  msg.init("/-snap/save");
 
   oscpkt::PacketWriter pw;
   pw.addMessage(msg);
@@ -162,9 +180,18 @@ bool mixer_controller::load_scene(int snap_index)
   if (!isConnected)
     return false;
 
-  std::string address = "/-snap/recall/";
+  // imposta l'indice dello snapshot da caricare
+  oscpkt::Message idx_msg;
+  idx_msg.init("/-snap/index").pushInt32(snap_index);
+
+  oscpkt::PacketWriter idx_pw;
+  idx_pw.addMessage(idx_msg);
+  if (!idx_pw.isOk() || !send_udp_packet(idx_pw.packetData(), idx_pw.packetSize()))
+    return false;
+
+  // carica lo snapshot
   oscpkt::Message msg;
-  msg.init(address).pushInt32(snap_index);
+  msg.init("/-snap/load");
 
   oscpkt::PacketWriter pw;
   pw.addMessage(msg);
