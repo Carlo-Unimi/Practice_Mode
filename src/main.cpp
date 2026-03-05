@@ -34,6 +34,12 @@ bool parse_arguments(int argc, char *argv[], std::string &filename)
   
 }
 
+void loading_screen() {
+  mvwprintw(stdscr, LINES / 2, (COLS - 15) / 2, "Caricamento...");
+  refresh();
+}
+
+
 //* PROGRAM HEAD
 int main(int argc, char *argv[])
 {
@@ -47,6 +53,8 @@ int main(int argc, char *argv[])
   cbreak();
   curs_set(0);
   refresh();
+
+  loading_screen();
 
   std::vector<std::string> title = {
       " _____             _   _            _____       _     ",
